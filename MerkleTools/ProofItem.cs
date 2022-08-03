@@ -1,3 +1,4 @@
+using System.Text;
 namespace MerkleTools
 {
     public class ProofItem
@@ -19,9 +20,8 @@ namespace MerkleTools
 		}
 		public object ToJson()
 		{
-			var branch = Branch == Branch.Left ? "left" : "right";
-			var encodedHash = HexEncoder.Encode(Hash);
-			return $"{{ \"{branch}\":\"{encodedHash}\"}}";
+			var encodedHash = Encoding.UTF8.GetString(Hash);
+			return $"\"{encodedHash}\"";
 		}
 	}
 }
