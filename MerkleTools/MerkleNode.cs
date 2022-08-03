@@ -59,6 +59,22 @@ namespace MerkleTools
 			}
 		}
 
-		public override int Level => 1+ Math.Max(Left?.Level ?? 0, Right?.Level ?? 0);
+		internal bool IsSmallByte(byte[] mainByte, byte[] comparedByte)
+		{
+			if (mainByte.Length != comparedByte.Length) return false;
+
+			for (int i = 0; i < mainByte.Length; i++)
+			{
+				if (mainByte[i] != comparedByte[i])
+				{
+					if (mainByte[i] < comparedByte[i]) return true;
+					else return false;
+				}
+			}
+
+			return false;
+		}
+
+		public override int Level => 1 + Math.Max(Left?.Level ?? 0, Right?.Level ?? 0);
 	}
 }
