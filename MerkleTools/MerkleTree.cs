@@ -101,5 +101,71 @@ namespace MerkleTools
 			Buffer.BlockCopy(h2, 0, buffer, h1.Length, h2.Length);
 			return keccakFromByte(buffer);
 		}
+
+
+		public static byte[] keccakFromTwoByte(byte[] _data, byte[] _data2)
+		{
+			var rawTransaction = System.Text.Encoding.UTF8.GetString(_data);
+			var rawTransaction2 = System.Text.Encoding.UTF8.GetString(_data2);
+
+			int offset = rawTransaction.StartsWith("0x") ? 2 : 0;
+			int offset2 = rawTransaction2.StartsWith("0x") ? 2 : 0;
+			var txByte1 = Enumerable.Range(offset, rawTransaction.Length - offset)
+							 .Where(x => x % 2 == 0)
+							 .Select(x => Convert.ToByte(rawTransaction.Substring(x, 2), 16))
+							 .ToArray();
+
+			var txByte2 = Enumerable.Range(offset2, rawTransaction2.Length - offset2)
+							 .Where(x => x % 2 == 0)
+							 .Select(x => Convert.ToByte(rawTransaction2.Substring(x, 2), 16))
+							 .ToArray();
+
+
+			byte[] txByte = txByte1.Concat(txByte2).ToArray();
+
+
+			//Note: Not intended for intensive use so we create a new Digest.
+			//if digest reuse, prevent concurrent access + call Reset before BlockUpdate
+			var digest = new KeccakDigest(256);
+
+			digest.BlockUpdate(txByte, 0, txByte.Length);
+			var calculatedHash = new byte[digest.GetByteLength()];
+			digest.DoFinal(calculatedHash, 0);
+			var transactionHash = BitConverter.ToString(calculatedHash, 0, 32).Replace("-", "").ToLower();
+			var temp = "0x" + transactionHash;
+
+
+			return Encoding.ASCII.GetBytes((temp));
+		}
+
+
+		public static byte[] keccakFromByte(byte[] _data)
+		{
+			if (_data == null) return null;
+			var rawTransaction = System.Text.Encoding.UTF8.GetString(_data);
+
+
+			int offset = rawTransaction.StartsWith("0x") ? 2 : 0;
+			var txByte = Enumerable.Range(offset, rawTransaction.Length - offset)
+							 .Where(x => x % 2 == 0)
+							 .Select(x => Convert.ToByte(rawTransaction.Substring(x, 2), 16))
+							 .ToArray();
+
+			var digest = new KeccakDigest(256);
+
+			digest.BlockUpdate(txByte, 0, txByte.Length);
+			var calculatedHash = new byte[digest.GetByteLength()];
+			digest.DoFinal(calculatedHash, 0);
+
+			var transactionHash = BitConverter.ToString(calculatedHash, 0, 32).Replace("-", "").ToLower();
+			var temp = "0x" + transactionHash;
+
+
+			return Encoding.ASCII.GetBytes((temp));
+		}
+
+
+
+
 	}
 }
