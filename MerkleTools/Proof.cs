@@ -7,23 +7,21 @@ namespace MerkleTools
 {
     public class Proof : IEnumerable<ProofItem>
 	{
-		public HashAlgorithm HashAlgorithm { get; }
 		public byte[] Target { get; }
 		public byte[] MerkleRoot { get; }
 		private readonly List<ProofItem> _proofItems = new List<ProofItem>();
 
 		public ProofItem this[int i] => _proofItems[i];
 
-		public Proof(byte[] target, byte[] merkleRoot, HashAlgorithm hashAlgorithm)
+		public Proof(byte[] target, byte[] merkleRoot)
 		{
-			HashAlgorithm = hashAlgorithm;
 			Target = target;
 			MerkleRoot = merkleRoot;
 		}
 
 		public void AddLeft(byte[] hash)
 		{
-			_proofItems.Add(new ProofItem(Branch.Left, hash));	
+			_proofItems.Add(new ProofItem(Branch.Left, hash));
 		}
 		public void AddRight(byte[] hash)
 		{
@@ -32,21 +30,21 @@ namespace MerkleTools
 
 		public bool Validate()
 		{
-			return Validate(Target, MerkleRoot, HashAlgorithm);
+			return Validate(Target, MerkleRoot);
 		}
 
-		public bool Validate(byte[] hash, byte[] root, HashAlgorithm hashAlgorithm)
+		public bool Validate(byte[] hash, byte[] root)
 		{
 			var proofHash = hash;
 			foreach (var x in this)
 			{
 				if (x.Branch == Branch.Left)
 				{
-					proofHash = MerkleTree.Melt(x.Hash, proofHash, hashAlgorithm);
+					proofHash = MerkleTree.Melt(x.Hash, proofHash);
 				}
 				else if (x.Branch == Branch.Rigth)
 				{
-					proofHash = MerkleTree.Melt(proofHash, x.Hash, hashAlgorithm);
+					proofHash = MerkleTree.Melt(proofHash, x.Hash);
 				}
 				else
 				{
