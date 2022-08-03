@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
+using Org.BouncyCastle.Crypto.Digests;
 
 namespace MerkleTools
 {
 	public class MerkleTree
 	{
-		private readonly HashAlgorithm _hashAlgorithm;
 		private readonly List<MerkleLeaf> _leave;
 		private MerkleNodeBase _root;
 		private bool _recalculate;
