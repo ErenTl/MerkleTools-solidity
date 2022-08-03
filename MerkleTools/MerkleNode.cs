@@ -50,9 +50,28 @@ namespace MerkleTools
 					{
 						_hash = Right.Hash;
 					}
+					else if (Right != null && Left != null)
+					{
+						if (IsSmallByte(Left.Hash, Right.Hash))
+						{
+							_hash = MerkleTree.keccakFromTwoByte(Left.Hash, Right.Hash);
+						}
+						else
+						{
+							_hash = MerkleTree.keccakFromTwoByte(Right.Hash, Left.Hash);
+						}
+
+					}
 					else
 					{
-						_hash = SHA256.Create().ComputeHash(Left.Hash.Concat(Right.Hash).ToArray());
+						if (IsSmallByte(Left.Hash, Right.Hash))
+						{
+							_hash = MerkleTree.keccakFromTwoByte(Left.Hash, Right.Hash);
+						}
+						else
+						{
+							_hash = MerkleTree.keccakFromTwoByte(Right.Hash, Left.Hash);
+						}
 					}
 				}
 				return _hash;
