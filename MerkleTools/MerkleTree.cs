@@ -28,18 +28,16 @@ namespace MerkleTools
 			}
 		}
 
-		public MerkleTree()
-			: this(SHA256.Create()){}
 
-		public MerkleTree(HashAlgorithm hashAlgorithm)
+
+		public MerkleTree()
 		{
-			_hashAlgorithm = hashAlgorithm;
 			_leave = new List<MerkleLeaf>();
 		}
 
 		public void AddLeaf(byte[] data, bool mustHash=false)
 		{
-			var hash = mustHash ? _hashAlgorithm.ComputeHash(data) : data;
+			var hash = mustHash ? keccakFromByte(data) : data;
 			_leave.Add(new MerkleLeaf(hash));
 			_recalculate = true;
 		}
@@ -54,7 +52,7 @@ namespace MerkleTools
 
 		internal Proof GetProof(MerkleLeaf leaf)
 		{
-			var proof = new Proof(leaf.Hash, Root.Hash, _hashAlgorithm);
+			var proof = new Proof(leaf.Hash, Root.Hash);
 			var node = (MerkleNodeBase)leaf;
 			while (node.Parent !=null)
 			{
@@ -91,17 +89,17 @@ namespace MerkleTools
 
 		public bool ValidateProof(Proof proof, byte[] hash)
 		{
-			return proof.Validate(hash, MerkleRootHash, _hashAlgorithm);
+			return proof.Validate(hash, MerkleRootHash);
 		}
 
 		public int Levels => Root.Level;
 
-		public static byte[] Melt(byte[] h1, byte[] h2, HashAlgorithm hashAlgorithm)
+		public static byte[] Melt(byte[] h1, byte[] h2)
 		{
 			var buffer = new byte[h1.Length + h2.Length];
 			Buffer.BlockCopy(h1, 0, buffer, 0, h1.Length);
 			Buffer.BlockCopy(h2, 0, buffer, h1.Length, h2.Length);
-			return hashAlgorithm.ComputeHash(buffer);
+			return keccakFromByte(buffer);
 		}
 	}
 }
