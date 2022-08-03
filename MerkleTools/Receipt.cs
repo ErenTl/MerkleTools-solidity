@@ -19,7 +19,7 @@ namespace MerkleTools
 			Context = "https://w3id.org/chainpoint/v2";
 			TargetHash = proof.Target;
 			MerkleRoot = proof.MerkleRoot;
-			var hashAlgorithmName = proof.HashAlgorithm.GetType().DeclaringType.Name;
+			var hashAlgorithmName = "Keccak256";
 			Type = $"Chainpoint{hashAlgorithmName}v2";
 			_anchors = new List<Anchor>();
 		}
