@@ -36,9 +36,11 @@ Console.WriteLine(proof.ToJson());
     "0x1f957db768cd7253fad82a8a30755840d536fb0ffca7c5c73fe9d815b1bc2f2f"]*/
 
 
+
 var address = Encoding.ASCII.GetBytes(addresses[0]);
 var addressHash = MerkleTree.keccakFromByte(address);
-var isValid = tree.ValidateProof(proof,
+var isValid = tree.ValidateProof(proof, addressHash);
+Console.WriteLine(isValid); //true
 ```
 
 ## Contact
