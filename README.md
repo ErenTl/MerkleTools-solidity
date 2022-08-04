@@ -4,6 +4,12 @@
 MerkleTools-solidity is a .NET library to create and validate Merkle trees and receipts compatible with @openzeppelin/contracts/utils/cryptography/MerkleProof.sol using keccak256 hash algorithm.
 
 
+## How to use?
+With nuget :
+> **Install-Package MerkleTools-solidity** 
+
+Go on the [nuget website](https://www.nuget.org/packages/MerkleTools-solidity/) for more information.
+
 ## Example
 
 ```c#
@@ -34,7 +40,6 @@ Console.WriteLine(proof.ToJson());
 
 /*[ "0x5931b4ed56ace4c46b68524cb5bcbf4195f1bbaacbe5228fbd090546c88dd229",
     "0x1f957db768cd7253fad82a8a30755840d536fb0ffca7c5c73fe9d815b1bc2f2f"]*/
-
 
 
 var address = Encoding.ASCII.GetBytes(addresses[0]);
