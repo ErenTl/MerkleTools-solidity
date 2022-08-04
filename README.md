@@ -1,78 +1,46 @@
 
 # MerkleTools
 
-MerkleTools is a .NET library to create of Merkle trees and output receipts in a format consistent with the [chainpoint](https://github.com/chainpoint) v2 standard. Also allows validation of a Chainpoint receipt.
+MerkleTools-solidity is a .NET library to create and validate Merkle trees and receipts compatible with @openzeppelin/contracts/utils/cryptography/MerkleProof.sol using keccak256 hash algorithm.
 
-This was developed in support of the [Blockchain Certificates](http://certificates.media.mit.edu/) project.
-
-
-## How to use?
-With nuget :
-> **Install-Package MerkleTools** 
-
-Go on the [nuget website](https://www.nuget.org/packages/MerkleTools/) for more information.
 
 ## Example
 
 ```c#
-var tree = new MerkleTree();
+using MerkleTools;
+using System.Text;
 
-tree.AddLeave(new[]{
-	HexEncoder.Decode("e1566f09e0deea437826514431be6e4bdb4fe10aa54d75aecf0b4cdc1bc4320c"),
-	HexEncoder.Decode("2f7f9092b2d6c5c17cfe2bcf33fc38a41f2e4d4485b198c2b1074bba067e7168"),
-	HexEncoder.Decode("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"),
-	HexEncoder.Decode("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
-});
+MerkleTree tree = new MerkleTree();
 
-var root = HexEncoder.Encode(tree.MerkleRootHash);
+string[] addresses = {  "0xa18FBe02d2f247922a8e7A9B3962cfd3b8aEE0Ca", 
+                        "0x5B38Da6a701c568545dCfcB03FcB875f56beddC4", 
+                        "0x25f7fF7917555132eDD3294626D105eA1C797250", 
+                        "0xF6574D878f99D94896Da75B6762fc935F34C1300"};
+
+for (int i = 0; i < addresses.Length; i++)
+{
+    byte[] temp = Encoding.ASCII.GetBytes(addresses[i]);
+    tree.AddLeaf(temp, true);
+}
+
+var root = Encoding.UTF8.GetString(tree.MerkleRootHash);
 Console.WriteLine(root);
 
-// 740c08b74d31bb77fd9806e4f6159d88dfd012acf8984bd41b4b4c9cbd7aa358
+//0x2bd66355c24f675a8a9411593198b3aacaec256d58a2ce950c798b7e9a378f28
 
-var proof = tree.GetProof(1);
+
+var proof = tree.GetProof(0);
 Console.WriteLine(proof.ToJson());
 
-/*
-[{ 
-	"left": "e1566f09e0deea437826514431be6e4bdb4fe10aa54d75aecf0b4cdc1bc4320c"
-},{ 
-	"right":"2dba5dbc339e7316aea2683faf839c1b7b1ee2313db792112588118df066aa35"
-}]"
-*/
+/*[ "0x5931b4ed56ace4c46b68524cb5bcbf4195f1bbaacbe5228fbd090546c88dd229",
+    "0x1f957db768cd7253fad82a8a30755840d536fb0ffca7c5c73fe9d815b1bc2f2f"]*/
 
-var hash = HexEncoder.Decode("2f7f9092b2d6c5c17cfe2bcf33fc38a41f2e4d4485b198c2b1074bba067e7168");
-var isValid = tree.ValidateProof(proof, hash);
 
-Console.WriteLine(isValid); // true
-
-var receipt = proof.ToReceipt();
-receipt.AddBitcoinAnchor("780b4cdc16f09e0deebce156a434320c2654fe10aa54d75ae14431be6e4bdbcf");
-Console.WriteLine(receipt.ToJson());
-
-/*
-{
-   "@context":"https://w3id.org/chainpoint/v2",
-   "type":"ChainpointSHA256v2",
-   "targetHash":"2f7f9092b2d6c5c17cfe2bcf33fc38a41f2e4d4485b198c2b1074bba067e7168",
-   "merkleRoot":"740c08b74d31bb77fd9806e4f6159d88dfd012acf8984bd41b4b4c9cbd7aa358",
-   "proof":[
-	  {
-		 "left":"e1566f09e0deea437826514431be6e4bdb4fe10aa54d75aecf0b4cdc1bc4320c"
-	  },
-	  {
-		 "right":"2dba5dbc339e7316aea2683faf839c1b7b1ee2313db792112588118df066aa35"
-	  }
-   ],
-   "anchors":[
-	  {
-		 "type":"BTCOpReturn",
-		 "sourceId":"780b4cdc16f09e0deebce156a434320c2654fe10aa54d75ae14431be6e4bdbcf"
-	  }
-   ]
-}
-*/
+var address = Encoding.ASCII.GetBytes(addresses[0]);
+var addressHash = MerkleTree.keccakFromByte(address);
+var isValid = tree.ValidateProof(proof,
 ```
 
 ## Contact
 
-Contact [info@O3-one.com](mailto:info@O3-one.com) with questions
+Contact [beneyim@gmail.com](mailto:beneyim@gmail.com) with questions
