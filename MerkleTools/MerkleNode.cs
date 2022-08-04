@@ -78,7 +78,7 @@ namespace MerkleTools
 			}
 		}
 
-		internal bool IsSmallByte(byte[] mainByte, byte[] comparedByte)
+		public static bool IsSmallByte(byte[] mainByte, byte[] comparedByte)
 		{
 			if (mainByte.Length != comparedByte.Length) return false;
 
