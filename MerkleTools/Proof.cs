@@ -38,20 +38,15 @@ namespace MerkleTools
 			var proofHash = hash;
 			foreach (var x in this)
 			{
-				if (x.Branch == Branch.Left)
+				if (MerkleNode.IsSmallByte(proofHash, x.Hash))
 				{
-					proofHash = MerkleTree.Melt(x.Hash, proofHash);
-				}
-				else if (x.Branch == Branch.Rigth)
-				{
-					proofHash = MerkleTree.Melt(proofHash, x.Hash);
+					proofHash = MerkleTree.keccakFromTwoByte(proofHash, x.Hash);
 				}
 				else
 				{
-					return false;
+					proofHash = MerkleTree.keccakFromTwoByte(x.Hash, proofHash);
 				}
 			}
-
 			return proofHash.SequenceEqual(root);
 		}
 
